@@ -35,6 +35,10 @@ private:
 	// Dig L-path between points
 	void digPath(int x1, int y1, int x2, int y2);
 
+	// Dig out rooms in the map using the bsp tree
+	// Post-order traversal of the bsp tree
+	void genMap(TCODBsp* ptr);
+
 public:
 	// Constructor
 	Map(int width, int height);
