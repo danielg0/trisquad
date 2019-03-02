@@ -20,7 +20,7 @@ Engine::Engine() {
 	map = std::make_unique<Map>(80, 50);
 
 	// Create actor
-	auto test = std::make_shared<Actor>(15, 15, '@', TCODColor::white);
+	auto test = std::make_shared<Actor>(12, 12, '@', TCODColor::white);
 	actors.push_back(test);
 	player = test;
 }
@@ -50,10 +50,27 @@ void Engine::Update() {
 
 	// Perform action
 	switch(key.vk) {
-		case TCODK_UP: --(player->y); break;
-		case TCODK_DOWN: ++(player->y); break;
-		case TCODK_LEFT: --(player->x); break;
-		case TCODK_RIGHT: ++(player->x); break;
+		// Move if there isn't a tile in the way
+		case TCODK_UP:
+			if(!map->isWall(player->x, player->y - 1)) {
+				--(player->y);
+			}
+			break;
+		case TCODK_DOWN:
+			if(!map->isWall(player->x, player->y + 1)) {
+				++(player->y);
+			}
+			break;
+		case TCODK_LEFT:
+			if(!map->isWall(player->x - 1, player->y)) {
+				--(player->x);
+			}
+			break;
+		case TCODK_RIGHT:
+			if(!map->isWall(player->x + 1, player->y)) {
+				++(player->x);
+			}
+			break;
 		default: break;
 	}
 }
