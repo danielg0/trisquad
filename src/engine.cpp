@@ -18,7 +18,7 @@ Engine::Engine() {
 	TCODSystem::setFps(30);
 
 	// Create map
-	map = std::make_unique<Map>(80, 50, this);
+	map = std::make_unique<Map>(80, 50);
 
 	// Create actor
 	// Get room to place in

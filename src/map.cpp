@@ -14,8 +14,7 @@ static const int ROOM_MAX_SIZE = 12;
 static const int ROOM_MIN_SIZE = 6;
 
 // Constructor
-Map::Map(int width, int height, Engine* ptr) : engine(ptr),
-	explored(width * height),
+Map::Map(int width, int height) : explored(width * height),
 	map(std::make_unique<TCODMap>(width, height)),
 	bsp(std::make_unique<TCODBsp>(0, 0, width - 1, height - 1)),
 	width(width), height(height) {
@@ -157,8 +156,8 @@ std::array<int, 4> Map::GetRoom(bool start) {
 	}
 }
 
-void Map::ComputeFOV() {
-	map->computeFov(engine->player->x, engine->player->y,
+void Map::ComputeFOV(int x, int y) {
+	map->computeFov(x, y,
 		10);
 }
 

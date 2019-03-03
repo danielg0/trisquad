@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "engine.hpp"
-
 #include "libtcod.hpp"
 
 #include <array>
@@ -19,9 +17,6 @@ struct Tile {
 
 class Map {
 private:
-	// Ptr to the engine (used to access actors and calc fov)
-	Engine* engine;
-
 	// Vector of tiles
 	std::vector<Tile> explored;
 
@@ -47,7 +42,7 @@ private:
 
 public:
 	// Constructor
-	Map(int width, int height, Engine* ptr);
+	Map(int width, int height);
 
 	// Map properties
 	int width;
@@ -64,7 +59,8 @@ public:
 	std::array<int, 4> GetRoom(bool start);
 
 	// Generate fov
-	void ComputeFOV();
+	// Takes the position (TODO: Positions) of the view
+	void ComputeFOV(int x, int y);
 
 	// Render function
 	void Render();
