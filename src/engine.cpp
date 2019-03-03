@@ -4,6 +4,8 @@
 
 #include "actor.hpp"
 #include "map.hpp"
+#include "monster.hpp"
+#include "player.hpp"
 
 #include "libtcod.hpp"
 
@@ -20,6 +22,9 @@ Engine::Engine() {
 	// Create map
 	map = std::make_unique<Map>(80, 50);
 
+	// Create array of actors
+	actors = std::make_shared<std::vector<std::shared_ptr<Actor>>>();
+
 	// Create actor
 	// Get room to place in
 	auto pos = map->GetRoom(true);
@@ -29,12 +34,17 @@ Engine::Engine() {
 	auto y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
 
 	// Make actor
-	auto test = std::make_shared<Actor>(x, y, '@', TCODColor::white);
-	actors.push_back(test);
+	auto test = std::make_shared<Player>(x, y, '@', TCODColor::white);
+	actors->push_back(test);
 	player = test;
 
 	// Calculate FOV
-	map->ComputeFOV();
+	map->ComputeFOV(x, y);
+
+	x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
+	y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
+	auto test2 = std::make_shared<Monster>(x, y, 'R', TCODColor::red);
+	actors->push_back(test2);
 }
 
 // Render function
@@ -45,9 +55,11 @@ void Engine::Render() const {
 	map->Render();
 
 	// Render all actors
-	for(auto i : actors) {
-		// TODO: Calculate actor position in scene
-		i->Render();
+	for(auto i : *actors) {
+		// Check if actor is in fov
+		if(map->InFov(i->x, i->y)) {
+			i->Render();
+		}
 	}
 
 	// Output to window
@@ -60,8 +72,8 @@ void Engine::Update() {
 	TCOD_key_t key;
 	TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &key, NULL);
 
-	// Create bool value to check if fov is recalculated
-	auto recalcFov = false;
+	// Create bool value to track whether player moved
+	auto moved = false;
 
 	// Perform action
 	switch(key.vk) {
@@ -69,32 +81,39 @@ void Engine::Update() {
 		case TCODK_UP:
 			if(!map->IsWall(player->x, player->y - 1)) {
 				--(player->y);
-				recalcFov = true;
+				moved = true;
 			}
 			break;
 		case TCODK_DOWN:
 			if(!map->IsWall(player->x, player->y + 1)) {
 				++(player->y);
-				recalcFov = true;
+				moved = true;
 			}
 			break;
 		case TCODK_LEFT:
 			if(!map->IsWall(player->x - 1, player->y)) {
 				--(player->x);
-				recalcFov = true;
+				moved = true;
 			}
 			break;
 		case TCODK_RIGHT:
 			if(!map->IsWall(player->x + 1, player->y)) {
 				++(player->x);
-				recalcFov = true;
+				moved = true;
 			}
 			break;
 		default: break;
 	}
 
-	// Recalc fov if player has moved
-	if(recalcFov) {
-		map->ComputeFOV();
+	// Recalc fov if player has moved and then carry out enemy turn
+	if(moved) {
+		map->ComputeFOV(player->x, player->y);
+
+		// Iterate over all actors that aren't the player
+		for(auto i : *actors) {
+			if(i != player) {
+				i->Update(actors, map);
+			}
+		}
 	}
 }

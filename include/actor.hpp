@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "map.hpp"
+
 #include "libtcod.hpp"
 
 class Actor {
@@ -22,4 +24,9 @@ public:
 
 	// Render function
 	void Render() const;
+
+	// Update function
+	// Specified in inherited class
+	virtual void Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
+		std::shared_ptr<Map> map) = 0;
 };

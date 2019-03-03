@@ -3,6 +3,8 @@
 #pragma once
 
 #include "actor.hpp"
+#include "map.hpp"
+#include "player.hpp"
 
 #include "libtcod.hpp"
 
@@ -15,7 +17,7 @@ class Map;
 class Engine {
 private:
 	// Vector of shared pointers to all actors on screen
-	std::vector<std::shared_ptr<Actor>> actors;
+	std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors;
 
 	// Pointer to current map
 	std::shared_ptr<Map> map;
@@ -31,7 +33,7 @@ public:
 	Engine();
 
 	// TODO: vector of shared_ptr to all main characters
-	std::shared_ptr<Actor> player;
+	std::shared_ptr<Player> player;
 
 	// Render and update function
 	void Update();
