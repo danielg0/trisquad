@@ -2,8 +2,11 @@
 
 #pragma once
 
+#include "engine.hpp"
+
 #include "libtcod.hpp"
 
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -16,8 +19,11 @@ struct Tile {
 
 class Map {
 private:
+	// Ptr to the engine (used to access actors and calc fov)
+	Engine* engine;
+
 	// Vector of tiles
-	std::vector<Tile> exploredTiles;
+	std::vector<Tile> explored;
 
 	// Pointer to a TCODMap to calculate FOV
 	std::unique_ptr<TCODMap> map;
@@ -41,20 +47,25 @@ private:
 
 public:
 	// Constructor
-	Map(int width, int height);
+	Map(int width, int height, Engine* ptr);
 
 	// Map properties
 	int width;
 	int height;
 
 	// Map interrogation functions
-	bool isWall(int x, int y) const;
-	bool inFov(int x, int y) const;
-	bool explored(int x, int y) const;
+	bool IsWall(int x, int y) const;
+	bool InFov(int x, int y);
+	bool IsExplored(int x, int y) const;
+
+	// Returns a random room to place an item/monster in
+	// Takes a boolean value: if true returns the location of the first room, to
+	// place the player in, else won't return that room
+	std::array<int, 4> GetRoom(bool start);
 
 	// Generate fov
-	void computeFOV();
+	void ComputeFOV();
 
 	// Render function
-	void Render() const;
+	void Render();
 };

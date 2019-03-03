@@ -5,6 +5,7 @@
 #include "libtcod.hpp"
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -13,7 +14,8 @@ static const int ROOM_MAX_SIZE = 12;
 static const int ROOM_MIN_SIZE = 6;
 
 // Constructor
-Map::Map(int width, int height) : exploredTiles(width * height),
+Map::Map(int width, int height, Engine* ptr) : engine(ptr),
+	explored(width * height),
 	map(std::make_unique<TCODMap>(width, height)),
 	bsp(std::make_unique<TCODBsp>(0, 0, width - 1, height - 1)),
 	width(width), height(height) {
@@ -94,6 +96,7 @@ void Map::genMap(TCODBsp* ptr) {
 	}
 	// Else, draw a path between the two child rooms
 	else {
+		// Get the midpoint of the two child nodes
 		auto x1 = ptr->getLeft()->x + (ptr->getLeft()->w / 2);
 		auto y1 = ptr->getLeft()->y + (ptr->getLeft()->h / 2);
 		auto x2 = ptr->getRight()->x + (ptr->getRight()->w / 2);
@@ -110,24 +113,77 @@ void Map::genMap(TCODBsp* ptr) {
 }
 
 // Map Interrogation
-bool Map::isWall(int x, int y) const {
+// Tile is wall
+bool Map::IsWall(int x, int y) const {
 	return !map->isWalkable(x, y);
 }
 
+// Tile currently seen
+bool Map::InFov(int x, int y) {
+	if(map->isInFov(x, y)) {
+		explored[x + y * width].explored = true;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+// If tile has previously been seen
+bool Map::IsExplored(int x, int y) const {
+	return explored[x + y * width].explored;
+}
+
+// Return a random room
+std::array<int, 4> Map::GetRoom(bool start) {
+	// If this is the room to place the player in, return the leftmost leaf from
+	// the bsp tree
+	if(start) {
+		auto ptr = bsp.get();
+
+		// Get leftmost leaf
+		while(!ptr->isLeaf()) {
+			ptr = ptr->getLeft();
+		}
+
+		// Return coords of room
+		// array: x1, y1, x2, y2
+		auto x = ptr->x;
+		auto y = ptr->y;
+		return {x, y, x + ptr->w - 2, y + ptr->h - 2};
+	}
+	else {
+		return {0, 0, 0, 0};
+	}
+}
+
+void Map::ComputeFOV() {
+	map->computeFov(engine->player->x, engine->player->y,
+		10);
+}
+
 // Render function
-void Map::Render() const {
+void Map::Render() {
 	// TODO: Viewpoint!!
 
 	// Define static colours for tiles
 	static const TCODColor darkWall(0, 0, 100);
 	static const TCODColor darkGround(50, 50, 150);
+	static const TCODColor lightWall(130,110,50);
+	static const TCODColor lightGround(200,180,50);
 
 	// Loop over all tiles
 	for(int x = 0; x < width; ++x) {
 		for(int y = 0; y < height; ++y) {
-			// Draw pixel background with colour
-			TCODConsole::root->setCharBackground(x, y,
-				isWall(x, y)? darkWall: darkGround);
+			// Draw pixel if in fov or discovered
+			if(InFov(x, y)) {
+				TCODConsole::root->setCharBackground(x, y,
+					IsWall(x, y)? lightWall: lightGround);
+			}
+			else if(IsExplored(x, y)) {
+				TCODConsole::root->setCharBackground(x, y,
+					IsWall(x, y)? darkWall: darkGround);
+			}
 		}
 	}
 }
