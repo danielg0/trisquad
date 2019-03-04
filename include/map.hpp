@@ -40,6 +40,10 @@ private:
 	// Post-order traversal of the bsp tree
 	void genMap(TCODBsp* ptr);
 
+	// Recursive function to get all the rooms off the bsp tree
+	void getTreeLeaves(std::shared_ptr<std::vector<TCODBsp*>> results,
+		TCODBsp* ptr);
+
 public:
 	// Constructor
 	Map(int width, int height);

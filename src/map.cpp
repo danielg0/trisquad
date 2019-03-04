@@ -111,6 +111,26 @@ void Map::genMap(TCODBsp* ptr) {
 	}
 }
 
+// Traverse tree
+void Map::getTreeLeaves(std::shared_ptr<std::vector<TCODBsp*>> results,
+		TCODBsp* ptr) {
+	// Get right node and left node if not null
+	auto left = ptr->getLeft();
+	if(left != nullptr) {
+		getTreeLeaves(results, left);
+	}
+
+	auto right = ptr->getRight();
+	if(right != nullptr) {
+		getTreeLeaves(results, right);
+	}
+
+	// Append node to results if leaf
+	if(ptr->isLeaf()) {
+		results->push_back(ptr);
+	}
+}
+
 // Map Interrogation
 // Tile is wall
 bool Map::IsWall(int x, int y) const {
@@ -135,25 +155,29 @@ bool Map::IsExplored(int x, int y) const {
 
 // Return a random room
 std::array<int, 4> Map::GetRoom(bool start) {
-	// If this is the room to place the player in, return the leftmost leaf from
-	// the bsp tree
+	// Traverse binary tree to get all leaf nodes
+	auto leaves = std::make_shared<std::vector<TCODBsp*>>();
+
+	auto ptr = bsp.get();
+
+	getTreeLeaves(leaves, ptr);
+
+	TCODBsp* leaf;
+
+	// Return pos of first result if this is the starting room
 	if(start) {
-		auto ptr = bsp.get();
-
-		// Get leftmost leaf
-		while(!ptr->isLeaf()) {
-			ptr = ptr->getLeft();
-		}
-
-		// Return coords of room
-		// array: x1, y1, x2, y2
-		auto x = ptr->x;
-		auto y = ptr->y;
-		return {x, y, x + ptr->w - 2, y + ptr->h - 2};
+		leaf = leaves->at(0);
 	}
 	else {
-		return {0, 0, 0, 0};
+		// Get random number between one and the size of the list
+		auto index = TCODRandom::getInstance()->getInt(1, leaves->size() - 1);
+		leaf = leaves->at(index);
 	}
+
+	// Get position of selected leaf
+	auto x = leaf->x;
+	auto y = leaf->y;
+	return {x, y, x + leaf->w - 2, y + leaf->h - 2};
 }
 
 void Map::ComputeFOV(int x, int y) {

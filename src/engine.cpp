@@ -41,9 +41,11 @@ Engine::Engine() {
 	// Calculate FOV
 	map->ComputeFOV(x, y);
 
+	pos = map->GetRoom(false);
+
 	x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
 	y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
-	auto test2 = std::make_shared<Monster>(x, y, 'R', TCODColor::red);
+	auto test2 = std::make_shared<Monster>(x, y, 'r', TCODColor::red);
 	actors->push_back(test2);
 }
 
