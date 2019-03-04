@@ -34,19 +34,26 @@ Engine::Engine() {
 	auto y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
 
 	// Make actor
-	auto test = std::make_shared<Player>(x, y, '@', TCODColor::white);
-	actors->push_back(test);
-	player = test;
+	auto actor = std::make_shared<Player>(x, y, '@', TCODColor::white);
+	actors->push_back(actor);
+	player = actor;
 
 	// Calculate FOV
 	map->ComputeFOV(x, y);
 
-	pos = map->GetRoom(false);
+	// Create some monsters
+	auto monsterCount = 10;
+	for(int i = 0; i < monsterCount; ++i) {
+		// Get room that isn't the start
+		pos = map->GetRoom(false);
 
-	x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
-	y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
-	auto test2 = std::make_shared<Monster>(x, y, 'r', TCODColor::red);
-	actors->push_back(test2);
+		// Get random x/y coord
+		auto x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
+		auto y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
+
+		auto monster = std::make_shared<Monster>(x, y, 'r', TCODColor::red);
+		actors->push_back(monster);
+	}
 }
 
 // Render function
