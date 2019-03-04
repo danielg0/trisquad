@@ -24,6 +24,14 @@ Map::Map(int width, int height) : explored(width * height),
 
 	// Call a recursive map generation function
 	genMap(bsp.get());
+
+	// Place the staircase in a random location in the map
+	// Get random room
+	auto pos = GetRoom(false);
+
+	// Set endX and endY to random values in that room
+	endX = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
+	endY = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
 }
 
 // Dig out a tile
@@ -153,6 +161,11 @@ bool Map::IsExplored(int x, int y) const {
 	return explored[x + y * width].explored;
 }
 
+// If tile is where staircase is
+bool Map::OnStaircase(int x, int y) const {
+	return (x == endX && y == endY);
+}
+
 // Return a random room
 std::array<int, 4> Map::GetRoom(bool start) {
 	// Traverse binary tree to get all leaf nodes
@@ -194,6 +207,7 @@ void Map::Render() {
 	static const TCODColor darkGround(50, 50, 150);
 	static const TCODColor lightWall(130,110,50);
 	static const TCODColor lightGround(200,180,50);
+	static const TCODColor staircase(255, 255, 255);
 
 	// Loop over all tiles
 	for(int x = 0; x < width; ++x) {
@@ -202,10 +216,22 @@ void Map::Render() {
 			if(InFov(x, y)) {
 				TCODConsole::root->setCharBackground(x, y,
 					IsWall(x, y)? lightWall: lightGround);
+
+				// Draw staircase
+				if(OnStaircase(x, y)) {
+					TCODConsole::root->setChar(x, y, '>');
+					TCODConsole::root->setCharForeground(x, y, staircase);
+				}
 			}
 			else if(IsExplored(x, y)) {
 				TCODConsole::root->setCharBackground(x, y,
 					IsWall(x, y)? darkWall: darkGround);
+
+				// Draw staircase
+				if(OnStaircase(x, y)) {
+					TCODConsole::root->setChar(x, y, '>');
+					TCODConsole::root->setCharForeground(x, y, staircase);
+				}
 			}
 		}
 	}

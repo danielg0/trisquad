@@ -32,6 +32,9 @@ public:
 	// Constructor
 	Engine();
 
+	// Create a new level
+	void NewLevel();
+
 	// TODO: vector of shared_ptr to all main characters
 	std::shared_ptr<Player> player;
 

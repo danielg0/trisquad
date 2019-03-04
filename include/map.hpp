@@ -26,6 +26,10 @@ private:
 	// BSP for level generation
 	std::unique_ptr<TCODBsp> bsp;
 
+	// Location of the staircase to the next level
+	int endX;
+	int endY;
+
 	// Map editing functions
 	// Dig single tile
 	void dig(int x, int y);
@@ -56,6 +60,7 @@ public:
 	bool IsWall(int x, int y) const;
 	bool InFov(int x, int y);
 	bool IsExplored(int x, int y) const;
+	bool OnStaircase(int x, int y) const;
 
 	// Returns a random room to place an item/monster in
 	// Takes a boolean value: if true returns the location of the first room, to

@@ -19,26 +19,39 @@ Engine::Engine() {
 	TCODConsole::initRoot(80, 55, "TriSquad", false);
 	TCODSystem::setFps(30);
 
-	// Create map
-	map = std::make_unique<Map>(80, 50);
-
-	// Create array of actors
+	// Initialise array of actors
 	actors = std::make_shared<std::vector<std::shared_ptr<Actor>>>();
 
-	// Create actor
-	// Get room to place in
-	auto pos = map->GetRoom(true);
+	// Create player
+	auto actor = std::make_shared<Player>(0, 0, '@', TCODColor::white);
 
-	// Random point in room
-	auto x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
-	auto y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
-
-	// Make actor
-	auto actor = std::make_shared<Player>(x, y, '@', TCODColor::white);
+	// Add to actors list and player variable
 	actors->push_back(actor);
 	player = actor;
 
-	// Calculate FOV
+	// Create a new level
+	NewLevel();
+}
+
+// Create a level function
+void Engine::NewLevel() {
+	// Create map
+	map = std::make_unique<Map>(80, 50);
+
+	// Clear array of actors and add player again
+	actors->clear();
+	actors->push_back(player);
+
+	// Get room to place actor in
+	auto pos = map->GetRoom(true);
+
+	// Assign andom point in room to the players position
+	auto x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
+	auto y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
+	player->x = x;
+	player->y = y;
+
+	// Calculate player's FOV
 	map->ComputeFOV(x, y);
 
 	// Create some monsters
@@ -116,6 +129,14 @@ void Engine::Update() {
 
 	// Recalc fov if player has moved and then carry out enemy turn
 	if(moved) {
+		// Check if player stood on staircase
+		if(map->OnStaircase(player->x, player->y)) {
+			// Create new level, then exit update loop
+			// Stops enemies attacking player who has dissapeared
+			NewLevel();
+			return;
+		}
+
 		map->ComputeFOV(player->x, player->y);
 
 		// Iterate over all actors that aren't the player
