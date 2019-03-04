@@ -7,7 +7,7 @@
 // Constructor
 // Call parent constructor
 Player::Player(int x, int y, int ch, const TCODColor& colour) :
-	Actor(x, y, ch, colour) {
+	Actor(x, y, ch, colour, Clan::player) {
 
 }
 

@@ -6,6 +6,11 @@
 
 #include "libtcod.hpp"
 
+enum Clan {
+	player,
+	monster
+};
+
 class Actor {
 private:
 	// ASCII code of character used to represent this actor
@@ -15,12 +20,15 @@ private:
 	TCODColor colour;
 
 public:
+	// This actor's team
+	Clan clan;
+
 	// This actor's position
 	int x;
 	int y;
 
 	// Constructor
-	Actor(int x, int y, int ch, const TCODColor& colour);
+	Actor(int x, int y, int ch, const TCODColor& colour, Clan clan);
 
 	// Render function
 	void Render() const;
