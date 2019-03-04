@@ -64,7 +64,7 @@ void Engine::NewLevel() {
 		auto x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
 		auto y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
 
-		auto monster = std::make_shared<Monster>(x, y, 'r', TCODColor::red);
+		auto monster = std::make_shared<Monster>(x, y, 'r', TCODColor::red, 10, 1);
 		actors->push_back(monster);
 	}
 }
@@ -137,13 +137,14 @@ void Engine::Update() {
 			return;
 		}
 
-		map->ComputeFOV(player->x, player->y);
-
 		// Iterate over all actors that aren't the player
 		for(auto i : *actors) {
 			if(i != player) {
 				i->Update(actors, map);
 			}
 		}
+
+		// Recalculate player field of view
+		map->ComputeFOV(player->x, player->y);
 	}
 }
