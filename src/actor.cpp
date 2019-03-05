@@ -5,8 +5,9 @@
 #include "libtcod.hpp"
 
 // Constructor
-Actor::Actor(int x, int y, int ch, const TCODColor& colour, Clan clan) : ch(ch),
-	colour(colour), clan(clan), x(x), y(y) {
+Actor::Actor(int x, int y, int ch, const TCODColor& colour, int health,
+	Clan clan) : ch(ch), colour(colour), health(health), clan(clan), x(x), y(y)
+	{
 
 }
 

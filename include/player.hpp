@@ -13,6 +13,6 @@ public:
 
 	// Update function
 	// Take user input and then move if tile is free
-	void Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
+	bool Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
 		std::shared_ptr<Map> map) override;
 };

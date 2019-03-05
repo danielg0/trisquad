@@ -20,6 +20,9 @@ private:
 	TCODColor colour;
 
 public:
+	// Health - the amount of health this creature has
+	int health;
+
 	// This actor's team
 	Clan clan;
 
@@ -28,13 +31,13 @@ public:
 	int y;
 
 	// Constructor
-	Actor(int x, int y, int ch, const TCODColor& colour, Clan clan);
+	Actor(int x, int y, int ch, const TCODColor& colour, int health, Clan clan);
 
 	// Render function
 	void Render() const;
 
 	// Update function
-	// Specified in inherited class
-	virtual void Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
+	// Specified in inherited class. Returns bool indicating whether actor moved
+	virtual bool Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
 		std::shared_ptr<Map> map) = 0;
 };

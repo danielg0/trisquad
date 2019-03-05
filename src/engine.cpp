@@ -90,42 +90,8 @@ void Engine::Render() const {
 
 // Update function
 void Engine::Update() {
-	// Take user input, and store in key
-	TCOD_key_t key;
-	TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &key, NULL);
-
 	// Create bool value to track whether player moved
-	auto moved = false;
-
-	// Perform action
-	switch(key.vk) {
-		// Move if there isn't a tile in the way
-		case TCODK_UP:
-			if(!map->IsWall(player->x, player->y - 1)) {
-				--(player->y);
-				moved = true;
-			}
-			break;
-		case TCODK_DOWN:
-			if(!map->IsWall(player->x, player->y + 1)) {
-				++(player->y);
-				moved = true;
-			}
-			break;
-		case TCODK_LEFT:
-			if(!map->IsWall(player->x - 1, player->y)) {
-				--(player->x);
-				moved = true;
-			}
-			break;
-		case TCODK_RIGHT:
-			if(!map->IsWall(player->x + 1, player->y)) {
-				++(player->x);
-				moved = true;
-			}
-			break;
-		default: break;
-	}
+	auto moved = player->Update(actors, map);
 
 	// Recalc fov if player has moved and then carry out enemy turn
 	if(moved) {
