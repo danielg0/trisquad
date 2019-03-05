@@ -31,3 +31,7 @@
 *.out
 *.app
 trisquad
+
+# Distribution Folder
+build/linux
+build/windows
