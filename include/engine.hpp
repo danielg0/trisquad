@@ -3,6 +3,7 @@
 #pragma once
 
 #include "actor.hpp"
+#include "log.hpp"
 #include "map.hpp"
 #include "player.hpp"
 
@@ -21,6 +22,9 @@ private:
 
 	// Pointer to current map
 	std::shared_ptr<Map> map;
+
+	// Pointer to log
+	std::shared_ptr<Log> log;
 
 	// Integer holding current state (menu? character selected?)
 

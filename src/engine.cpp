@@ -11,6 +11,7 @@
 
 #include <array>
 #include <memory>
+#include <string>
 #include <vector>
 
 // Constructor
@@ -18,6 +19,9 @@ Engine::Engine() {
 	// Setup window and set frame rate
 	TCODConsole::initRoot(80, 55, "TriSquad", false);
 	TCODSystem::setFps(30);
+
+	// Create log
+	log = std::make_shared<Log>();
 
 	// Initialise array of actors
 	actors = std::make_shared<std::vector<std::shared_ptr<Actor>>>();
@@ -74,6 +78,7 @@ void Engine::Render() const {
 	// Clear screen
 	TCODConsole::root->clear();
 
+	// Render map
 	map->Render();
 
 	// Render all actors
@@ -83,6 +88,9 @@ void Engine::Render() const {
 			i->Render();
 		}
 	}
+
+	// Render log
+	log->Render(0, 50, 80, 5);
 
 	// Output to window
     TCODConsole::flush();
@@ -95,6 +103,9 @@ void Engine::Update() {
 
 	// Recalc fov if player has moved and then carry out enemy turn
 	if(moved) {
+		// Flush log messages
+		log->Push();
+
 		// Check if player stood on staircase
 		if(map->OnStaircase(player->x, player->y)) {
 			// Create new level, then exit update loop
@@ -112,5 +123,8 @@ void Engine::Update() {
 
 		// Recalculate player field of view
 		map->ComputeFOV(player->x, player->y);
+
+		// TEST
+		log->LogMsg("Player moved");
 	}
 }
