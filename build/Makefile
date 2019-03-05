@@ -1,6 +1,6 @@
 CC = g++
 CCWIN = x86_64-w64-mingw32-g++
-CFLAGS  = -g -Wall
+CFLAGS  = -g -Wall -pedantic
 
 INCLUDES = -I../include -I../include/libtcod
 
