@@ -99,7 +99,7 @@ void Engine::Render() const {
 // Update function
 void Engine::Update() {
 	// Create bool value to track whether player moved
-	auto moved = player->Update(actors, map);
+	auto moved = player->Update(actors, map, log);
 
 	// Recalc fov if player has moved and then carry out enemy turn
 	if(moved) {
@@ -117,14 +117,11 @@ void Engine::Update() {
 		// Iterate over all actors that aren't the player
 		for(auto i : *actors) {
 			if(i != player) {
-				i->Update(actors, map);
+				i->Update(actors, map, log);
 			}
 		}
 
 		// Recalculate player field of view
 		map->ComputeFOV(player->x, player->y);
-
-		// TEST
-		log->LogMsg("Player moved");
 	}
 }

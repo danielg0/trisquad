@@ -22,5 +22,5 @@ public:
 
 	// Calculate next move
 	bool Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
-		std::shared_ptr<Map> map) override;
+		std::shared_ptr<Map> map, std::shared_ptr<Log> log) override;
 };
