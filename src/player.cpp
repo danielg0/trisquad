@@ -52,7 +52,6 @@ bool Player::Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
 	// If player is attacking wall, return no move
 	if(map->IsWall(x + dx, y + dy)) {
 		log->LogMsg("You run into a wall");
-
 		return false;
 	}
 
@@ -76,6 +75,7 @@ bool Player::Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
 	else if(ptr->clan != clan) {
 		// Attack this actor
 		log->LogMsg("You attack...");
+		moved = true;
 	}
 	// Else that tile contains another actor, so switch places
 	else {

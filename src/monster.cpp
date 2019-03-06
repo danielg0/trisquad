@@ -94,6 +94,9 @@ bool Monster::Update(
 	// If clan is different from this monster's clan
 	else if(ptr->clan != clan) {
 		// Attack that unit
+		ptr->health -= damage;
+
+		log->LogMsg("Enemy attacked you");
 	}
 	// Otherwise, tile is occupied by same type of monster as this so don't move
 	else {
