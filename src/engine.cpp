@@ -23,6 +23,9 @@ Engine::Engine() {
 	// Setup game state
 	gameLost = false;
 
+	// Set initial level
+	level = 0;
+
 	// Create log
 	log = std::make_shared<Log>();
 
@@ -78,6 +81,10 @@ void Engine::NewLevel() {
 		auto monster = std::make_shared<Monster>(mX, mY, 'r', TCODColor::red, 10, 1);
 		actors->push_back(monster);
 	}
+
+	// Output level number
+	++level;
+	log->LogMsg("Welcome To Level " + std::to_string(level));
 }
 
 // Tile contains actor

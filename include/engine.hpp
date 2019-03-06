@@ -27,6 +27,7 @@ private:
 	std::shared_ptr<Log> log;
 
 	// Integer holding current state (menu? character selected?)
+	int level;
 
 	// Position of view on screen
 	int x;
