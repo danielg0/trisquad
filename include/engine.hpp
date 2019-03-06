@@ -39,6 +39,9 @@ public:
 	// Create a new level
 	void NewLevel();
 
+	// Whether game lost yet
+	bool gameLost;
+
 	// TODO: vector of shared_ptr to all main characters
 	std::shared_ptr<Player> player;
 

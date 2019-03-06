@@ -18,6 +18,14 @@ static int PLAYER_HEALTH = 10;
 Player::Player(int x, int y, int ch, const TCODColor& colour) :
 	Actor(x, y, ch, colour, PLAYER_HEALTH, Clan::player) {
 
+	// Default damage
+	// Todo: change this to a default weapon
+	damage = 5;
+}
+
+// Attacking function
+void Player::Attack(std::shared_ptr<Actor> target) {
+	target->health -= damage;
 }
 
 // Update monster position
@@ -74,6 +82,7 @@ bool Player::Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
 	// Else if tile contains actor of a type other than this
 	else if(ptr->clan != clan) {
 		// Attack this actor
+		Attack(ptr);
 		log->LogMsg("You attack...");
 		moved = true;
 	}

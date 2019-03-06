@@ -20,6 +20,9 @@ Engine::Engine() {
 	TCODConsole::initRoot(80, 55, "TriSquad", false);
 	TCODSystem::setFps(30);
 
+	// Setup game state
+	gameLost = false;
+
 	// Create log
 	log = std::make_shared<Log>();
 
@@ -141,5 +144,25 @@ void Engine::Update() {
 
 		// Recalculate player field of view
 		map->ComputeFOV(player->x, player->y);
+
+		// See if any enemies died
+		for(auto i = actors->begin(); i != actors->end(); ++i) {
+			if((*i)->health <= 0) {
+				// Normal monster - delete it
+				if(*i != player) {
+					if(map->InFov((*i)->x, (*i)->y)) {
+						log->LogMsg("Enemy died");
+					}
+
+					i = actors->erase(i);
+					if(i == actors->end()) { break; }
+				}
+				// Player - end game
+				else {
+					log->LogMsg("You died");
+					gameLost = true;
+				}
+			}
+		}
 	}
 }
