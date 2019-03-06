@@ -61,16 +61,34 @@ void Engine::NewLevel() {
 	// Create some monsters
 	auto monsterCount = 10;
 	for(int i = 0; i < monsterCount; ++i) {
-		// Get room that isn't the start
-		pos = map->GetRoom(false);
+		int mX, mY;
 
-		// Get random x/y coord
-		auto x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
-		auto y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
+		do {
+			// Get room that isn't the start
+			pos = map->GetRoom(false);
 
-		auto monster = std::make_shared<Monster>(x, y, 'r', TCODColor::red, 10, 1);
+			// Get random x/y coord
+			mX = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
+			mY = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
+		} while(ContainsActor(mX, mY));
+
+		auto monster = std::make_shared<Monster>(mX, mY, 'r', TCODColor::red, 10, 1);
 		actors->push_back(monster);
 	}
+}
+
+// Tile contains actor
+bool Engine::ContainsActor(int x, int y) {
+	auto result = false;
+
+	// Loop over all actors
+	for(auto i : *actors) {
+		if(i->x == x && i->y == y) {
+			result = true;
+		}
+	}
+
+	return result;
 }
 
 // Render function

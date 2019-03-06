@@ -42,6 +42,9 @@ public:
 	// TODO: vector of shared_ptr to all main characters
 	std::shared_ptr<Player> player;
 
+	// A tile in the map contains an actor
+	bool ContainsActor(int x, int y);
+
 	// Render and update function
 	void Update();
 	void Render() const;
