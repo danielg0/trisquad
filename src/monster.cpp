@@ -2,6 +2,9 @@
 
 #include "monster.hpp"
 
+#include "log.hpp"
+#include "map.hpp"
+
 #include "libtcod.hpp"
 
 // Constructor
@@ -15,7 +18,7 @@ Monster::Monster(int x, int y, int ch, const TCODColor& colour, int health,
 // Update monster position
 bool Monster::Update(
 	std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
-	std::shared_ptr<Map> map) {
+	std::shared_ptr<Map> map, std::shared_ptr<Log> log) {
 	// Recompute map fov
 	map->ComputeFOV(x, y);
 

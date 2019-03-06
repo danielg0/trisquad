@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "log.hpp"
 #include "map.hpp"
 
 #include "libtcod.hpp"
@@ -39,5 +40,5 @@ public:
 	// Update function
 	// Specified in inherited class. Returns bool indicating whether actor moved
 	virtual bool Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
-		std::shared_ptr<Map> map) = 0;
+		std::shared_ptr<Map> map, std::shared_ptr<Log> log) = 0;
 };

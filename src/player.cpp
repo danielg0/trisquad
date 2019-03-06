@@ -2,6 +2,9 @@
 
 #include "player.hpp"
 
+#include "log.hpp"
+#include "map.hpp"
+
 #include "libtcod.hpp"
 
 #include <algorithm>
@@ -19,7 +22,7 @@ Player::Player(int x, int y, int ch, const TCODColor& colour) :
 
 // Update monster position
 bool Player::Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
-	std::shared_ptr<Map> map) {
+	std::shared_ptr<Map> map, std::shared_ptr<Log> log) {
 	// Take user input, and store in key
 	TCOD_key_t key;
 	TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &key, NULL);
@@ -48,6 +51,8 @@ bool Player::Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
 
 	// If player is attacking wall, return no move
 	if(map->IsWall(x + dx, y + dy)) {
+		log->LogMsg("You run into a wall");
+
 		return false;
 	}
 
@@ -70,9 +75,11 @@ bool Player::Update(std::shared_ptr<std::vector<std::shared_ptr<Actor>>> actors,
 	// Else if tile contains actor of a type other than this
 	else if(ptr->clan != clan) {
 		// Attack this actor
+		log->LogMsg("You attack...");
 	}
 	// Else that tile contains another actor, so switch places
 	else {
+		log->LogMsg("You switch places");
 		std::swap(x, ptr->x);
 		std::swap(y, ptr->y);
 		moved = true;

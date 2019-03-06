@@ -61,16 +61,34 @@ void Engine::NewLevel() {
 	// Create some monsters
 	auto monsterCount = 10;
 	for(int i = 0; i < monsterCount; ++i) {
-		// Get room that isn't the start
-		pos = map->GetRoom(false);
+		int mX, mY;
 
-		// Get random x/y coord
-		auto x = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
-		auto y = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
+		do {
+			// Get room that isn't the start
+			pos = map->GetRoom(false);
 
-		auto monster = std::make_shared<Monster>(x, y, 'r', TCODColor::red, 10, 1);
+			// Get random x/y coord
+			mX = TCODRandom::getInstance()->getInt(pos[0], pos[2]);
+			mY = TCODRandom::getInstance()->getInt(pos[1], pos[3]);
+		} while(ContainsActor(mX, mY));
+
+		auto monster = std::make_shared<Monster>(mX, mY, 'r', TCODColor::red, 10, 1);
 		actors->push_back(monster);
 	}
+}
+
+// Tile contains actor
+bool Engine::ContainsActor(int x, int y) {
+	auto result = false;
+
+	// Loop over all actors
+	for(auto i : *actors) {
+		if(i->x == x && i->y == y) {
+			result = true;
+		}
+	}
+
+	return result;
 }
 
 // Render function
@@ -99,7 +117,7 @@ void Engine::Render() const {
 // Update function
 void Engine::Update() {
 	// Create bool value to track whether player moved
-	auto moved = player->Update(actors, map);
+	auto moved = player->Update(actors, map, log);
 
 	// Recalc fov if player has moved and then carry out enemy turn
 	if(moved) {
@@ -117,14 +135,11 @@ void Engine::Update() {
 		// Iterate over all actors that aren't the player
 		for(auto i : *actors) {
 			if(i != player) {
-				i->Update(actors, map);
+				i->Update(actors, map, log);
 			}
 		}
 
 		// Recalculate player field of view
 		map->ComputeFOV(player->x, player->y);
-
-		// TEST
-		log->LogMsg("Player moved");
 	}
 }
