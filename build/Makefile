@@ -4,8 +4,8 @@ CFLAGS  = -g -Wall -pedantic
 
 INCLUDES = -I../include -I../include/libtcod
 
-LFLAGS = -L. -Wl,-rpath=.
-LIBS =  -ltcod -lSDL2
+LLIBS = -L. -l:libSDL2-2.0.so.0 -ltcod -Wl,-rpath,'$$ORIGIN'
+WLIBS = -L. -Wl,-rpath=. -ltcod -lSDL2
 
 SRCS = $(wildcard ../src/*.cpp)
 OBJS = $(SRCS:.cpp = .o)
@@ -25,10 +25,10 @@ dist: clean all
 	cp $(MAIN).exe $(wildcard *.dll) $(FONT) windows
 
 linux: $(OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LLIBS)
 
 windows: $(OBJS)
-	$(CCWIN) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
+	$(CCWIN) $(CFLAGS) $(INCLUDES) -o $(MAIN).exe $(OBJS) $(WLIBS)
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
